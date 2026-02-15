@@ -35,7 +35,10 @@ df = pd.DataFrame({
 if st.button("Predict"):
 
     for col in encoder:
-        df[col] = encoder[col].transform(df[col])
+        if col in df.columns:
+            df[col] =
+    encoder[col].transform(df[col])
+        
 
     df = df[model.feature_names_in_]
 
