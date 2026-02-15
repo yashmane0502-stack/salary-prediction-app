@@ -72,4 +72,4 @@ if st.button("Predict Salary"):
         st.success(f"Predicted Salary: ₹ {prediction[0]:,.2f}")
 
     except Exception as e:
-        st.error(f"Error: {e}"
+        st.error(f"Error: {e}")
