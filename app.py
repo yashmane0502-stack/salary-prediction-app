@@ -11,36 +11,65 @@ import streamlit as st
 import pandas as pd
 import joblib
 
+# ------------------ Load Model & Encoder ------------------ #
 model = joblib.load("salary_prediction_model (3).pkl")
 encoder = joblib.load("label_encoder (3).pkl")
 
+# ------------------ App Title ------------------ #
+st.title("💼 Salary Prediction App")
 
-st.title("Salary prediction app")
-
+# ------------------ User Inputs ------------------ #
 age = st.number_input("Age", min_value=18, max_value=65)
-gender = st.selectbox("Gender", encoder["Gender"].classes_)
-education = st.selectbox("Education Level", encoder["Education Level"].classes_)
-job_title = st.selectbox("Job Title", encoder["Job Title"].classes_)
-years_of_experience = st.number_input("Years of Experience", min_value=0, max_value=65)
 
+gender = st.selectbox(
+    "Gender",
+    encoder["Gender"].classes_
+)
 
-df = pd.DataFrame({
-    "Age":[age],
-    "Gender":[gender],
-    "Education Level":[education],
-    "Job Title":[job_title],
-    "Years of Experience":[years_of_experience]
-})
+education = st.selectbox(
+    "Education Level",
+    encoder["Education Level"].classes_
+)
 
-if st.button("Predict"):
+job_title = st.selectbox(
+    "Job Title",
+    encoder["Job Title"].classes_
+)
 
-    for col in encoder:
-        if col in df.columns:
+years_of_experience = st.number_input(
+    "Years of Experience",
+    min_value=0,
+    max_value=65
+)
+
+# ------------------ Create DataFrame ------------------ #
+input_data = {
+    "Age": age,
+    "Gender": gender,
+    "Education Level": education,
+    "Job Title": job_title,
+    "Years of Experience": years_of_experience
+}
+
+df = pd.DataFrame([input_data])
+
+# ------------------ Prediction ------------------ #
+if st.button("Predict Salary"):
+
+    try:
+        # Encode categorical columns
+        categorical_cols = ["Gender", "Education Level", "Job Title"]
+
+        for col in categorical_cols:
             df[col] = encoder[col].transform(df[col])
-        
 
-    df = df[model.feature_names_in_]
+        # Match model feature order safely
+        df = df.reindex(columns=model.feature_names_in_, fill_value=0)
 
-    prediction = model.predict(df)
+        # Predict
+        prediction = model.predict(df)
 
-    st.success(f"Predicted Salary: {prediction[0]:,.2f}")
+        st.success(f"Predicted Salary: ₹ {prediction[0]:,.2f}")
+
+    except Exception as e:
+        st.error(f"Error: {e}"
