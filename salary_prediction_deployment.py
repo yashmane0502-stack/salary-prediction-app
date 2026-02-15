@@ -9,7 +9,7 @@ Original file is located at
 
 import streamlit as st
 import pandas as Pd
-
+import joblib
 
 model = joblib.load('salary_prediction_model (3).pkl')
 encoder = joblib.load('label_encoder (3).pkl')
