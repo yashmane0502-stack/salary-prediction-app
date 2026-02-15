@@ -8,7 +8,7 @@ Original file is located at
 """
 
 import streamlit as st
-import pandas as Pd
+import pandas as pd
 import joblib
 
 model = joblib.load("salary_prediction_model (3).pkl")
